@@ -18,7 +18,7 @@ public class Main extends JavaPlugin implements Listener {
 
     public final String TITLE = "FirstPlugin";
     public YamlConfiguration conf;
-    private static final String DEFAULT_TEXT = "&l&bWelcome @p join our server!";
+    private static final String DEFAULT_TEXT = "&b&lWelcome @p join our server!";
 
     /** 死了都要try */
     public void confRegister() {
