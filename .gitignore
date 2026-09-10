@@ -1,0 +1,29 @@
+# Minecraft Server
+
+banned-ips.json
+banned-players.json
+bukkit.yml
+commands.yml
+*.txt
+help.yml
+ops.json
+permissions.yml
+*.properties
+spigot.yml
+usercache.json
+whitelist.json
+logs/
+plugins/
+world/
+world_nether/
+world_the_end/
+
+# Tests
+server/
+
+# IDEs
+.idea/
+.vscode/
+
+# Built output
+target/

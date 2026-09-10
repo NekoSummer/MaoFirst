@@ -1,0 +1,10 @@
+name: MaoFirst
+description: My First Spigot Plugin
+version: 1.0.0
+main: cn.xinyue_neko.maoFirst.Main
+api-version: 1.13
+
+commands:
+  test:
+    description: Test
+    usage: /test
