@@ -3,11 +3,9 @@ description: My First Spigot Plugin
 version: 1.0.0
 main: cn.xinyue_neko.NekoMOTD.Main
 api-version: 1.13
+author: XinYueNeko
 
 commands:
   test:
     description: Test
-    usage: /test
-  reloadmotd:
-    description: Reload motd
-    usage: /reloadmotd
+    usage: /<command>

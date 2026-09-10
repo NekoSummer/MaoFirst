@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.xinyue_neko</groupId>
-    <artifactId>MaoFirst</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>NekoMOTD</artifactId>
+    <version>1.0.0.dev</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -29,6 +29,7 @@
             <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Only Spigot can Run -->
     </dependencies>
 
     <build>

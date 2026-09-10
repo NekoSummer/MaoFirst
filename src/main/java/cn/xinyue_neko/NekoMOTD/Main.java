@@ -1,10 +1,7 @@
 package cn.xinyue_neko.NekoMOTD;
 
-import cn.xinyue_neko.NekoMOTD.command.TestCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,8 +22,12 @@ public class Main extends JavaPlugin implements Listener {
     public YamlConfiguration conf;
     private static final String DEFAULT_TEXT = "&b&lWelcome @p join our server!";
 
-    String heading;
-    List<String> motd;
+    public String heading;
+    public List<String> motd;
+
+    public Main() {
+
+    }
 
     /** 死了都要try */
     public void confRegister() {
@@ -35,19 +36,19 @@ public class Main extends JavaPlugin implements Listener {
          */
         this.getDataFolder().mkdirs();
         File f = new File(this.getDataFolder(), "config.yml");
+        conf = YamlConfiguration.loadConfiguration(f);
+        conf.addDefault("welcome-text", DEFAULT_TEXT);
 
-        this.conf = YamlConfiguration.loadConfiguration(f);
-        this.conf.addDefault("welcome-text", DEFAULT_TEXT);
+        conf.addDefault("heading", "&bNekoMOTD Default heading"); //抄的SuperMotd
+        conf.addDefault("motd-list", Arrays.asList("&aMOTD random line 1", "&aMOTD random line 2", "&aMOTD random line 3"));
 
-        this.conf.addDefault("heading", "&bNekoMOTD Default heading"); //抄的SuperMotd
-        this.conf.addDefault("motd-list", Arrays.asList("&aMOTD random line 1", "&aMOTD random line 2", "&aMOTD random line 3"));
+        conf.options().copyDefaults(true);
 
-        this.conf.options().copyDefaults(true);
         try {
-            this.conf.save(f);
+            conf.save(f);
         } catch (IOException e) {
             this.getServer().getConsoleSender().sendRawMessage("[" + TITLE + "]" + ChatColor.RED + " ERROR, " + e.getMessage());
-            this.conf = new YamlConfiguration();
+            conf = new YamlConfiguration();
         }
     }
 
@@ -59,8 +60,8 @@ public class Main extends JavaPlugin implements Listener {
         this.confRegister();
         this.getServer().getPluginManager().registerEvents(this, this);
         this.getCommand("test").setExecutor(new TestCommand());
-        this.heading = this.conf.getString("heading").replace('&', ChatColor.COLOR_CHAR);
-        this.motd = this.conf.getStringList("motd-list");
+        heading = conf.getString("heading").replace('&', ChatColor.COLOR_CHAR);
+        motd = conf.getStringList("motd-list");
         this.getServer().getConsoleSender().sendMessage("[" + TITLE + "]" + ChatColor.AQUA + " Setting MOTD Heading to: " + this.heading);
     }
 
@@ -71,7 +72,7 @@ public class Main extends JavaPlugin implements Listener {
         Player p = e.getPlayer();
 
         String r = DEFAULT_TEXT;
-        Object obj = this.conf.get("welcome-text");
+        Object obj = conf.get("welcome-text");
         if (obj instanceof String && !((String) obj).trim().isEmpty()) {
             r = (String) obj;
         }
@@ -83,22 +84,8 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onServerPing(ServerListPingEvent e) {
         Random r = new Random();
-        String randStr = this.motd.get(r.nextInt(motd.size())).replace('&', ChatColor.COLOR_CHAR);
+        String randStr = motd.get(r.nextInt(motd.size())).replace('&', ChatColor.COLOR_CHAR);
         e.setMotd(heading + "\n" + randStr);
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("reloadmotd")) {
-            if(sender.hasPermission("supermotd.reloadmotd")){
-                sender.sendMessage(ChatColor.GREEN + "Reloading MOTD Config...");
-                reloadConfig();
-                heading = this.conf.getString("heading").replace("&", "§");
-                motd = this.conf.getStringList("motd-list");
-                sender.sendMessage("New MOTD Heading: " + heading);
-                return true;
-            }
-        }
-        return true;
-    }
 }

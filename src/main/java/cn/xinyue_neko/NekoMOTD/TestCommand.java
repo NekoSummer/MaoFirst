@@ -1,4 +1,4 @@
-package cn.xinyue_neko.NekoMOTD.command;
+package cn.xinyue_neko.NekoMOTD;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
