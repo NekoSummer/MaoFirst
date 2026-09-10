@@ -1,10 +1,13 @@
-name: MaoFirst
+name: NekoMOTD
 description: My First Spigot Plugin
 version: 1.0.0
-main: cn.xinyue_neko.maoFirst.Main
+main: cn.xinyue_neko.NekoMOTD.Main
 api-version: 1.13
 
 commands:
   test:
     description: Test
     usage: /test
+  reloadmotd:
+    description: Reload motd
+    usage: /reloadmotd

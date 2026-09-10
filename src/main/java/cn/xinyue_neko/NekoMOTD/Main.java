@@ -1,5 +1,6 @@
-package cn.xinyue_neko.maoFirst;
+package cn.xinyue_neko.NekoMOTD;
 
+import cn.xinyue_neko.NekoMOTD.command.TestCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -9,16 +10,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class Main extends JavaPlugin implements Listener {
 
-    public final String TITLE = "FirstPlugin";
+    public final String TITLE = "NekoMOTD";
     public YamlConfiguration conf;
     private static final String DEFAULT_TEXT = "&b&lWelcome @p join our server!";
+
+    String heading;
+    List<String> motd;
 
     /** 死了都要try */
     public void confRegister() {
@@ -30,6 +38,9 @@ public class Main extends JavaPlugin implements Listener {
 
         this.conf = YamlConfiguration.loadConfiguration(f);
         this.conf.addDefault("welcome-text", DEFAULT_TEXT);
+
+        this.conf.addDefault("heading", "&bNekoMOTD Default heading"); //抄的SuperMotd
+        this.conf.addDefault("motd-list", Arrays.asList("&aMOTD random line 1", "&aMOTD random line 2", "&aMOTD random line 3"));
 
         this.conf.options().copyDefaults(true);
         try {
@@ -47,8 +58,13 @@ public class Main extends JavaPlugin implements Listener {
          */
         this.confRegister();
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getConsoleSender().sendMessage(ChatColor.WHITE + "[" + TITLE + "]" + ChatColor.AQUA + " Hello");
+        this.getCommand("test").setExecutor(new TestCommand());
+        this.heading = this.conf.getString("heading").replace('&', ChatColor.COLOR_CHAR);
+        this.motd = this.conf.getStringList("motd-list");
+        this.getServer().getConsoleSender().sendMessage("[" + TITLE + "]" + ChatColor.AQUA + " Setting MOTD Heading to: " + this.heading);
     }
+
+
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
@@ -64,13 +80,24 @@ public class Main extends JavaPlugin implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
     }
 
+    @EventHandler
+    public void onServerPing(ServerListPingEvent e) {
+        Random r = new Random();
+        String randStr = this.motd.get(r.nextInt(motd.size())).replace('&', ChatColor.COLOR_CHAR);
+        e.setMotd(heading + "\n" + randStr);
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player) {
-            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "FUCK YOU! MOJANG");
-            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "FUCK YOU! MICROSOFT");
-        } else {
-            sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+        if (command.getName().equalsIgnoreCase("reloadmotd")) {
+            if(sender.hasPermission("supermotd.reloadmotd")){
+                sender.sendMessage(ChatColor.GREEN + "Reloading MOTD Config...");
+                reloadConfig();
+                heading = this.conf.getString("heading").replace("&", "§");
+                motd = this.conf.getStringList("motd-list");
+                sender.sendMessage("New MOTD Heading: " + heading);
+                return true;
+            }
         }
         return true;
     }
