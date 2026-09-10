@@ -76,7 +76,9 @@ public class Main extends JavaPlugin implements Listener {
         if (obj instanceof String && !((String) obj).trim().isEmpty()) {
             r = (String) obj;
         }
-        String msg = ChatColor.translateAlternateColorCodes('&', r).replace("@p", p.getName());
+        String msg = ChatColor.translateAlternateColorCodes('&', r)
+                .replace("@p", p.getName())
+                .replace("@n", "\n");
         e.setJoinMessage(msg);
         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
     }
